@@ -1,6 +1,7 @@
 import java.math.BigInteger;
+import java.util.Arrays;
 
-public class Base55 {
+public class Main {
     private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmno";
     private static final BigInteger BASE = BigInteger.valueOf(55);
 
@@ -13,6 +14,10 @@ public class Base55 {
             sb.append(ALPHABET.charAt(dr[1].intValue()));
             value = dr[0];
         }
+        for (byte b : data) {
+            if (b == 0) sb.append(ALPHABET.charAt(0));
+            else break;
+        }
         return sb.reverse().toString();
     }
 
@@ -21,10 +26,14 @@ public class Base55 {
         BigInteger value = BigInteger.ZERO;
         for (char c : encoded.toCharArray()) {
             int index = ALPHABET.indexOf(c);
-            if (index == -1) throw new IllegalArgumentException("Invalid character: " + c);
+            if (index == -1) throw new IllegalArgumentException("Invalid char: " + c);
             value = value.multiply(BASE).add(BigInteger.valueOf(index));
         }
-        return value.toByteArray();
+        byte[] bytes = value.toByteArray();
+        if (bytes.length > 1 && bytes[0] == 0) {
+            return Arrays.copyOfRange(bytes, 1, bytes.length);
+        }
+        return bytes;
     }
 
     public static void main(String[] args) {
